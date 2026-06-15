@@ -321,7 +321,7 @@
         </div>
 
         <div class="info">
-            <p id="classCount">15 de 15 classes · Última atualização: <span id="lastUpdate"></span></p>
+            <p id="classCount">15 de 15 classes</p>
         </div>
 
         <div class="classes-grid" id="classesGrid">
@@ -512,9 +512,7 @@
                             ${playersHtml}
                         </tbody>
                     </table>
-                    <div class="class-footer">
-                        <span class="last-update">Atualizado: ${formatDateTime(now)}</span>
-                    </div>
+                    <div class="class-footer"></div>
                 </div>
             `;
         }
@@ -522,9 +520,6 @@
         function renderClasses(classes = classesData) {
             const grid = document.getElementById('classesGrid');
             grid.innerHTML = classes.map(c => createClassCard(c)).join('');
-            
-            const now = new Date();
-            document.getElementById('lastUpdate').textContent = formatDateTime(now);
         }
 
         function updateRanking() {
