@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2 Olympiads - Ranking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            font-size: 1.1em;
+            color: #b0b0b0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"],
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"] {
+            background: #2a2a3e;
+            color: #e0e0e0;
+            border: 1px solid #00d4ff;
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        input[type="text"]::placeholder {
+            color: #808080;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #0099ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        button {
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            color: #000;
+            font-weight: bold;
+            padding: 10px 30px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #808080;
+            font-size: 0.9em;
+        }
+
+        .classes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(700px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .class-card {
+            background: #252538;
+            border-radius: 10px;
+            overflow: hidden;
+            border-left: 4px solid #00d4ff;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .class-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .class-header {
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            padding: 20px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .class-id {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .class-name {
+            font-size: 1.5em;
+            margin: 5px 0;
+        }
+
+        .leader-section {
+            padding: 20px;
+            border-bottom: 1px solid #3a3a4e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leader-info {
+            flex: 1;
+        }
+
+        .leader-label {
+            font-size: 0.85em;
+            opacity: 0.7;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .leader-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .leader-points {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table tbody {
+            display: block;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        table thead,
+        table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        th {
+            background: #1a1a2e;
+            color: #00d4ff;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px 12px;
+        }
+
+        td {
+            border-bottom: 1px solid #3a3a4e;
+        }
+
+        tr:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .rank {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .rank-1 {
+            color: #ffd700;
+        }
+
+        .rank-2 {
+            color: #c0c0c0;
+        }
+
+        .rank-3 {
+            color: #cd7f32;
+        }
+
+        .player-name {
+            color: #00d4ff;
+        }
+
+        .class-footer {
+            padding: 15px 20px;
+            background: #1a1a2e;
+            font-size: 0.85em;
+            color: #808080;
+        }
+
+        .last-update {
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .classes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                padding: 8px 4px;
+                font-size: 0.8em;
+            }
+
+            table tbody {
+                max-height: 250px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0099ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>L2 OLYMPIADS</h1>
+            <p>Ranking de Competição por Classe</p>
+        </header>
+
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="Buscar classe ou jogador">
+            <button onclick="updateRanking()">Atualizar Ranking</button>
+        </div>
+
+        <div class="info">
+            <p id="classCount">15 de 15 classes · Última atualização: <span id="lastUpdate"></span></p>
+        </div>
+
+        <div class="classes-grid" id="classesGrid">
+            <!-- Classes serão inseridas aqui via JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const classesData = [
+            {
+                id: 88,
+                name: 'Duelist',
+                players: [
+                    { rank: 1, name: 'Gojo', points: 31, kd: '41·22', matches: 63, winrate: '65%' },
+                    { rank: 2, name: 'SonicMaster', points: 22, kd: '17·12', matches: 29, winrate: '59%' },
+                    { rank: 3, name: 'Artur', points: 14, kd: '34·24', matches: 58, winrate: '59%' },
+                    { rank: 4, name: 'Lillia', points: 7, kd: '11·15', matches: 26, winrate: '42%' }
+                ]
+            },
+            {
+                id: 89,
+                name: 'Warlord',
+                players: [
+                    { rank: 1, name: 'LuisShield', points: 28, kd: '25·18', matches: 43, winrate: '58%' },
+                    { rank: 2, name: 'Defender', points: 19, kd: '20·16', matches: 36, winrate: '55%' },
+                    { rank: 3, name: 'ProtectorX', points: 12, kd: '15·20', matches: 35, winrate: '42%' }
+                ]
+            },
+            {
+                id: 90,
+                name: 'Dreadnought',
+                players: [
+                    { rank: 1, name: 'Na', points: 11, kd: '3·6', matches: 9, winrate: '33%' }
+                ]
+            },
+            {
+                id: 91,
+                name: 'Hell Knight',
+                players: [
+                    { rank: 1, name: 'DarkCross', points: 13, kd: '4·5', matches: 9, winrate: '44%' }
+                ]
+            },
+            {
+                id: 92,
+                name: 'Sagittarius',
+                players: [
+                    { rank: 1, name: 'xTande', points: 9, kd: '3·6', matches: 9, winrate: '33%' },
+                    { rank: 2, name: 'AMG', points: 8, kd: '10·10', matches: 20, winrate: '50%' }
+                ]
+            },
+            {
+                id: 93,
+                name: 'Adventurer',
+                players: [
+                    { rank: 1, name: 'McGregor', points: 17, kd: '5·4', matches: 9, winrate: '56%' }
+                ]
+            },
+            {
+                id: 95,
+                name: 'Soultaker',
+                players: [
+                    { rank: 1, name: 'ShaolinDoSerTao', points: 3, kd: '8·17', matches: 25, winrate: '32%' }
+                ]
+            },
+            {
+                id: 97,
+                name: 'Cardinal',
+                players: [
+                    { rank: 1, name: 'Estagiario', points: 48, kd: '11·4', matches: 15, winrate: '73%' },
+                    { rank: 2, name: 'StarFoX', points: 3, kd: '1·10', matches: 11, winrate: '9%' }
+                ]
+            },
+            {
+                id: 99,
+                name: 'Eva\'s Templar',
+                players: [
+                    { rank: 1, name: 'MaGiCaLHoLy', points: 27, kd: '26·18', matches: 44, winrate: '59%' },
+                    { rank: 2, name: 'Bingola', points: 18, kd: '11·7', matches: 18, winrate: '61%' }
+                ]
+            },
+            {
+                id: 103,
+                name: 'Mystic Muse',
+                players: [
+                    { rank: 1, name: 'Pinaple', points: 0, kd: '1·14', matches: 15, winrate: '7%' },
+                    { rank: 2, name: 'Sym1', points: 0, kd: '0·12', matches: 12, winrate: '0%' }
+                ]
+            },
+            {
+                id: 104,
+                name: 'Elemental Master',
+                players: [
+                    { rank: 1, name: 'Simphony', points: 18, kd: '5·4', matches: 9, winrate: '56%' }
+                ]
+            },
+            {
+                id: 105,
+                name: 'Eva\'s Saint',
+                players: [
+                    { rank: 1, name: 'PoKong', points: 80, kd: '31·14', matches: 45, winrate: '69%' }
+                ]
+            },
+            {
+                id: 110,
+                name: 'Storm Screamer',
+                players: [
+                    { rank: 1, name: 'KidZiN', points: 21, kd: '8·4', matches: 12, winrate: '67%' },
+                    { rank: 2, name: 'Skunk', points: 0, kd: '2·15', matches: 17, winrate: '12%' }
+                ]
+            },
+            {
+                id: 113,
+                name: 'Titan',
+                players: [
+                    { rank: 1, name: 'VAP0', points: 0, kd: '7·18', matches: 25, winrate: '28%' }
+                ]
+            },
+            {
+                id: 115,
+                name: 'Dominator',
+                players: [
+                    { rank: 1, name: 'Dex', points: 73, kd: '31·14', matches: 45, winrate: '69%' },
+                    { rank: 2, name: 'p1x', points: 15, kd: '5·4', matches: 9, winrate: '56%' },
+                    { rank: 3, name: 'lHooPl', points: 13, kd: '11·12', matches: 23, winrate: '48%' }
+                ]
+            },
+            {
+                id: 118,
+                name: 'Maestro',
+                players: [
+                    { rank: 1, name: 'Prentiss', points: 12, kd: '4·5', matches: 9, winrate: '44%' },
+                    { rank: 2, name: 'pegaOVO', points: 4, kd: '4·13', matches: 17, winrate: '24%' }
+                ]
+            }
+        ];
+
+        function formatDateTime(date) {
+            return date.toLocaleString('pt-BR');
+        }
+
+        function getRankClass(rank) {
+            if (rank === 1) return 'rank rank-1';
+            if (rank === 2) return 'rank rank-2';
+            if (rank === 3) return 'rank rank-3';
+            return 'rank';
+        }
+
+        function createClassCard(classData) {
+            const leader = classData.players[0];
+            const now = new Date();
+            
+            const playersHtml = classData.players.map(p => `
+                <tr>
+                    <td class="${getRankClass(p.rank)}">${p.rank}</td>
+                    <td class="player-name">${p.name}</td>
+                    <td>${p.points}</td>
+                    <td>${p.kd}</td>
+                    <td>${p.matches}</td>
+                    <td>${p.winrate}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <div class="class-card">
+                    <div class="class-header">
+                        <div class="class-id">CLASSE #${classData.id}</div>
+                        <div class="class-name">${classData.name}</div>
+                    </div>
+                    <div class="leader-section">
+                        <div class="leader-info">
+                            <div class="leader-label">🏆 Líder</div>
+                            <div class="leader-name">${leader.name}</div>
+                        </div>
+                        <div class="leader-points">${leader.points} pts</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nome</th>
+                                <th>Pts</th>
+                                <th>K·D</th>
+                                <th>Matches</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${playersHtml}
+                        </tbody>
+                    </table>
+                    <div class="class-footer">
+                        <span class="last-update">Atualizado: ${formatDateTime(now)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderClasses(classes = classesData) {
+            const grid = document.getElementById('classesGrid');
+            grid.innerHTML = classes.map(c => createClassCard(c)).join('');
+            
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = formatDateTime(now);
+        }
+
+        function updateRanking() {
+            // Simula atualização dos dados
+            alert('Ranking atualizado!');
+            renderClasses();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (!searchTerm) {
+                renderClasses();
+                return;
+            }
+
+            const filtered = classesData.filter(classData => {
+                const classMatch = classData.name.toLowerCase().includes(searchTerm);
+                const playerMatch = classData.players.some(p => 
+                    p.name.toLowerCase().includes(searchTerm)
+                );
+                return classMatch || playerMatch;
+            });
+
+            if (filtered.length > 0) {
+                const grid = document.getElementById('classesGrid');
+                grid.innerHTML = filtered.map(c => createClassCard(c)).join('');
+            }
+        });
+
+        // Inicializa a página
+        renderClasses();
+    </script>
+</body>
+</html>
